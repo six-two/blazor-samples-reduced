@@ -1,0 +1,30 @@
+name: Build Blazor WASM AOT
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x 
+
+      - name: Install WASM tools
+        run: dotnet workload install wasm-tools
+
+      - name: Publish (AOT)
+        working-directory: 10.0/BlazorSample_BlazorWebAssembly
+        run: dotnet publish -c Release
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: blazor-aot-output
+          path: 10.0/BlazorSample_BlazorWebAssembly/bin/Release/net10.0/publish/wwwroot
